@@ -1,7 +1,8 @@
-from pprint import pprint
-
+from config import logger
 from dotenv import load_dotenv
 import os
+import sys
+import traceback
 
 import httplib2
 import apiclient
@@ -23,7 +24,8 @@ service = apiclient.discovery.build('sheets', 'v4', http=http_auth)
 
 
 def fill_whole_table(data):
-    # print(data)
+    data.sort(key=lambda x: x[-1], reverse=True)
+    print(data[0])
     values = service.spreadsheets().values().batchUpdate(
         spreadsheetId=GOOGLE_SHEET_ID,
         body={
@@ -58,5 +60,14 @@ def start_spreadsheet():
     except Exception:
         sell_limit = 0
 
-    fill_whole_table(make_total_data_array("RUB", bank_amount, {"BUY": buy_limit,
-                                                                "SELL": sell_limit}))
+    logger.info(f'{__name__}/{sys._getframe().f_code.co_name}: {bank_amount}, "BUY": {buy_limit}, "SELL": {sell_limit}')
+    try:
+        fill_whole_table(make_total_data_array("RUB", bank_amount, {"BUY": buy_limit,
+                                                                    "SELL": sell_limit}))
+
+        logger.info("Done successfully!")
+        print("Done successfully!")
+    except Exception:
+        logger.error(f'{__name__}/{sys._getframe().f_code.co_name}: {traceback.format_exc()}')
+        print("Error!", traceback.print_exc())
+

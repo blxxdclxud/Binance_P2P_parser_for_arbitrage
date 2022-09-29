@@ -19,8 +19,8 @@ ALL_ASSET_COUPLES = list(set(combinations + list(map(lambda x: x[::-1], combinat
 # ]
 
 BANKS_EN_RUS = {
-    "Tinkoff": "Тинькофф",
-    "RosBank": "Росбанк",
+    "TinkoffNew": "Тинькофф",
+    "RosBankNew": "Росбанк",
     "QIWI": "QIWI",
     "YandexMoneyNew": "ЮMoney"
 }

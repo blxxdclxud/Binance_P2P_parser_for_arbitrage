@@ -1,4 +1,4 @@
-import time
+from config import logger
 import asyncio
 from aiohttp import ClientSession
 
@@ -75,6 +75,8 @@ async def get_all_data(session, params, num):
             all_symbols_data[params["symbol"]] = make_price_dict(resp_json)["price"]
             # time.sleep(0.5)
         else:
+            # print(params)
+            # print(123, resp_json, url_parameters)
             all_data.append((num, make_asset_info_dict(resp_json)))
 
 

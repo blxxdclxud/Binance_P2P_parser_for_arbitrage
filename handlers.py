@@ -1,10 +1,14 @@
 from parsers import *
 from CONSTANTS import BANKS_EN_RUS, ALL_ASSET_COUPLES, OPERATION_TYPES, SYMBOLS
 import asyncio
+import time
+from config import logger
+import sys
 
 
 def calculate_profit(bank_amount, from_asset_p2p, to_asset_p2p, exchange_price, ratio=1):
     amount_after_operation = (bank_amount / from_asset_p2p) * (exchange_price ** ratio) * to_asset_p2p
+    # print(from_asset_p2p, to_asset_p2p, exchange_price, ratio, exchange_price)
 
     return amount_after_operation - bank_amount
 
@@ -31,12 +35,17 @@ def make_total_data_array(fiat, bank_amount, limits):
 
     start_time = time.time()
 
+    print(all_params_array)
+    logger.info(f'{__name__}/{sys._getframe().f_code.co_name}: all_params_array = {all_params_array}')
+
     asyncio.run(load_data(all_params_array))
 
     end_time = time.time()
+    logger.info(f'{__name__}/{sys._getframe().f_code.co_name}: requests time = {end_time - start_time}')
     print(end_time - start_time)
     all_data.sort(key=lambda s: s[0])
     # print(all_data)
+    logger.info(f'{__name__}/{sys._getframe().f_code.co_name}: all_data = {all_data}')
 
     for idx in range(len(all_data) // 2):
         from_asset = all_data[2 * idx][1]
@@ -64,7 +73,8 @@ def make_total_data_array(fiat, bank_amount, limits):
 
 
 def get_all_params(from_asset, to_asset, fiat, order_type, bank, limits):
-    from_asset_info = form_asset_info_params(from_asset, fiat, order_type[0], pay_types=[bank], limit=limits[order_type[0]])
+    from_asset_info = form_asset_info_params(from_asset, fiat, order_type[0], pay_types=[bank],
+                                             limit=limits[order_type[0]])
     to_asset_info = form_asset_info_params(to_asset, fiat, order_type[1], pay_types=[bank], limit=limits[order_type[1]])
 
     return [from_asset_info, to_asset_info]
@@ -94,6 +104,5 @@ def get_analytics(bank_amount, from_info, to_info, profit, operation_type):
     ]
 
     return formatted_info
-
 
 # make_total_data_array("RUB", 30000)
